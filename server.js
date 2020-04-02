@@ -29,9 +29,10 @@ function serverActiveMessage() {
   console.log(`Listening to connections to port ${port}`);
 }
 
-app.get("/get", getCallback);
+app.get("/test-get", getCallback);
 
 function getCallback(request, response) {
   console.log("Received a get request");
-  response.send("Get received!");
+  response.send("GET received");
+  // response.send({"answer": 42});
 }

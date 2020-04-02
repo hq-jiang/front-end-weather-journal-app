@@ -26,13 +26,21 @@ const server = app.listen(port, serverActiveMessage);
 
 function serverActiveMessage() {
   console.log("Server running");
-  console.log(`Listening to connections to port ${port}`);
+  console.log(`Listening to connections at http://localhost:${port}`);
 }
 
+// Test GET request
 app.get("/test-get", getCallback);
-
 function getCallback(request, response) {
   console.log("Received a get request");
   response.send("GET received");
   // response.send({"answer": 42});
+}
+
+// Test POST request
+app.post("/test-post", postCallback);
+function postCallback(request, response) {
+  console.log("Received a get request");
+  console.log(request.body);
+  response.send("POST received");
 }

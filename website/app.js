@@ -30,6 +30,8 @@ async function postData () {
 
   } catch (error) {
     console.error(error);
+    dateDiv = document.querySelector("#date");
+    dateDiv.textContent = error;
   }
 }
 

@@ -1,5 +1,5 @@
 // Setup empty JS object to act as endpoint for all routes
-projectData = {};
+projectData = [];
 
 // Require Express to run server and routes
 const express = require("express");
@@ -29,11 +29,27 @@ function serverActiveMessage() {
   console.log(`Listening to connections at http://localhost:${port}`);
 }
 
+// GET request for projectData
+app.get("/projectdata", respondProjectData);
+function respondProjectData (request, response) {
+  console.log("Received a GET request on projectData route");
+  response.send(projectData);
+}
+
+// POST request for projectData
+app.post("/projectdata", processProjectData);
+function processProjectData(request, response) {
+  console.log("Received a POST request on projectData route");
+  projectData.push(request.body);
+  console.log(projectData);
+  response.send("POST received on projectData route");
+}
+
 // Test GET request
 app.get("/test-get", getCallback);
 function getCallback(request, response) {
   console.log("Received a get request");
-  response.send("GET received");
+  response.send("GET received on test route");
   // response.send({"answer": 42});
 }
 
@@ -42,5 +58,5 @@ app.post("/test-post", postCallback);
 function postCallback(request, response) {
   console.log("Received a get request");
   console.log(request.body);
-  response.send("POST received");
+  response.send("POST received on test route");
 }

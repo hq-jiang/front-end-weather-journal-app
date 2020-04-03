@@ -9,52 +9,65 @@ BASEURL = "http://api.openweathermap.org/data/2.5/weather";
 CREDENTIALS = "APPID=cb23854f95face62703a8ce74dc109f1";
 
 let button = document.querySelector("#generate");
-// button.addEventListener("click", getRequest);
-// button.addEventListener("click", postRequest);
-// button.addEventListener("click", getWeatherData.bind(null, baseUrl, credentials));
-// button.addEventListener("click", getFeelsText);
+// button.addEventListener("click", testGetRequest);
+// button.addEventListener("click", testPostRequest);
 button.addEventListener("click", postData);
 
 async function postData () {
   try {
-    const projectData = await collectData();
-    console.log(projectData);
+    const projectDataEntry = await collectData();
+
+    const response = await fetch("/projectdata", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(projectDataEntry)
+    });
+
+    updateUI();
+
   } catch (error) {
     console.error(error);
   }
 }
 
+async function updateUI () {
+  const responseData = await getData();
+  console.log(responseData);
+  console.log("GET data from server", await getData());
+  dateDiv = document.querySelector("#date");
+  weatherDiv = document.querySelector("#weather");
+  contentDiv = document.querySelector("#content");
+
+  mostRecentData = responseData[responseData.length-1];
+  dateDiv.textContent = mostRecentData.date;
+  weatherDiv.textContent = mostRecentData.weather;
+  contentDiv.textContent = mostRecentData.feels;
+}
+
+async function getData () {
+  try {
+    const response = await fetch("/projectdata", {
+      method: "GET",
+      credentials: "same-origin",
+    });
+    const responseData = await response.json();
+    return responseData;
+  } catch (error) {
+
+  }
+}
+
 async function collectData() {
-  let projectData = {};
+  let projectDataEntry = {};
 
   // Collect project data
-  projectData.weather = await getWeatherData(BASEURL, CREDENTIALS);
-  projectData.date = NEWDATE;
-  projectData.feels = getFeelsText();
-  return projectData;
-
-}
-
-async function getRequest() {
-  const response = await fetch("/test-get", {
-    method: "GET",
-    credentials: "same-origin",
-  });
-  const responseData = await response.text();
-  console.log(responseData);
-}
-
-async function postRequest() {
-  const response = await fetch("/test-post", {
-    method: "POST",
-    credentials: "same-origin",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({"posting": "somedata"})
-  });
-  const responseData = await response.text();
-  console.log(responseData);
+  projectDataEntry.weather = await getWeatherData(BASEURL, CREDENTIALS);
+  projectDataEntry.date = NEWDATE;
+  projectDataEntry.feels = getFeelsText();
+  return projectDataEntry;
 }
 
 async function getWeatherData(base, credentials) {
@@ -78,6 +91,27 @@ function getZipCode() {
 
 function getFeelsText() {
   const feelsText = document.querySelector("#feelings").value;
-  console.log(feelsText);
   return feelsText;
+}
+
+async function testPostRequest() {
+  const response = await fetch("/test-post", {
+    method: "POST",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({"posting": "somedata"})
+  });
+  const responseData = await response.text();
+  console.log(responseData);
+}
+
+async function testGetRequest() {
+  const response = await fetch("/test-get", {
+    method: "GET",
+    credentials: "same-origin",
+  });
+  const responseData = await response.text();
+  console.log(responseData);
 }
